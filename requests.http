@@ -1,0 +1,125 @@
+### Campeonato de Futebol - API REST
+### IntelliJ HTTP Client. Execute as requisicoes de cima para baixo.
+
+@baseUrl = http://localhost:8080
+
+### 1. Cadastra jogador
+POST {{baseUrl}}/jogadores
+Content-Type: application/json
+
+{
+  "nome": "Pele",
+  "numero": 10,
+  "posicao": "ATACANTE"
+}
+
+> {% client.global.set("jogadorId", response.body.id); %}
+
+### 2. Lista jogadores
+GET {{baseUrl}}/jogadores
+
+### 3. Busca jogador por ID
+GET {{baseUrl}}/jogadores/{{jogadorId}}
+
+### 4. Cadastra time mandante
+POST {{baseUrl}}/times
+Content-Type: application/json
+
+{
+  "nome": "Santos",
+  "cidade": "Santos"
+}
+
+> {% client.global.set("timeMandanteId", response.body.id); %}
+
+### 5. Cadastra time visitante
+POST {{baseUrl}}/times
+Content-Type: application/json
+
+{
+  "nome": "Palmeiras",
+  "cidade": "Sao Paulo"
+}
+
+> {% client.global.set("timeVisitanteId", response.body.id); %}
+
+### 6. Lista times
+GET {{baseUrl}}/times
+
+### 7. Adiciona jogador ao time mandante
+POST {{baseUrl}}/times/{{timeMandanteId}}/jogadores/{{jogadorId}}
+
+### 8. Busca time por ID (com jogadores)
+GET {{baseUrl}}/times/{{timeMandanteId}}
+
+### 9. Cria campeonato com os dois times
+POST {{baseUrl}}/campeonatos
+Content-Type: application/json
+
+{
+  "nome": "Brasileirao",
+  "ano": 2024,
+  "timeIds": ["{{timeMandanteId}}", "{{timeVisitanteId}}"]
+}
+
+> {% client.global.set("campeonatoId", response.body.id); %}
+
+### 10. Registra partida (mandante x visitante)
+POST {{baseUrl}}/partidas
+Content-Type: application/json
+
+{
+  "data": "2024-05-01",
+  "idMandante": "{{timeMandanteId}}",
+  "idVisitante": "{{timeVisitanteId}}"
+}
+
+> {% client.global.set("partidaId", response.body.id); %}
+
+### 11. Registra partida invalida (mesmo time) -> 400
+POST {{baseUrl}}/partidas
+Content-Type: application/json
+
+{
+  "data": "2024-05-01",
+  "idMandante": "{{timeMandanteId}}",
+  "idVisitante": "{{timeMandanteId}}"
+}
+
+### 12. Lista partidas
+GET {{baseUrl}}/partidas
+
+### 13. Busca partida por ID
+GET {{baseUrl}}/partidas/{{partidaId}}
+
+### 14. Atualiza placar 2 x 1 (mandante vence -> +3 pontos)
+PATCH {{baseUrl}}/partidas/{{partidaId}}/placar
+Content-Type: application/json
+
+{
+  "golMandante": 2,
+  "golVisitante": 1
+}
+
+### 15. Registra cartao amarelo
+POST {{baseUrl}}/partidas/{{partidaId}}/cartoes
+Content-Type: application/json
+
+{
+  "idJogador": "{{jogadorId}}",
+  "tipo": "AMARELO",
+  "minuto": 37
+}
+
+### 16. Registra cartao invalido -> 400
+POST {{baseUrl}}/partidas/{{partidaId}}/cartoes
+Content-Type: application/json
+
+{
+  "idJogador": "{{jogadorId}}",
+  "tipo": "AZUL",
+  "minuto": 37
+}
+
+### 17. Classificacao do campeonato (ordenada por pontos desc.)
+GET {{baseUrl}}/campeonatos/{{campeonatoId}}/classificacao

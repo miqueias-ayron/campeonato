@@ -2,25 +2,40 @@ package com.campeonato.campeonato.time;
 import com.campeonato.campeonato.jogador.Jogador;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Time {
+    private final String id;
     private String nome;
     private String cidade;
     private ArrayList<Jogador> jogadores = new ArrayList<>();
     private int pontuacao = 0;
 
     public Time(String nome, String cidade){
+        this.id = UUID.randomUUID().toString();
         this.nome = nome;
         this.cidade = cidade;
 
     }
 
+    public String getId(){
+
+        return this.id;
+    }
+
     public String getNome(){
+
         return this.nome;
+    }
+
+    public String getCidade(){
+
+        return this.cidade;
     }
 
     public void adicionarJogador(Jogador jogador){
         jogadores.add(jogador);
+        jogador.setTime(this);
     }
 
     public void removerJogador(Jogador jogador){

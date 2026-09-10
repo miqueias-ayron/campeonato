@@ -16,4 +16,15 @@ public class Cartao {
         this.partida = partida;
     }
 
+    public Jogador getJogador(){
+        return this.jogador;
+    }
+
+    public int getMinuto(){
+        return this.minuto;
+    }
+
+    public String getTipo(){
+        return this.tipo;
+    }
 }
